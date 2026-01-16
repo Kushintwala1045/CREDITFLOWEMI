@@ -6,7 +6,7 @@ pipeline {
             steps {
                 sh '''
                 docker run --rm \
-                  -v $(pwd):/CREDITFLOWEMI \
+                  -v $(pwd):/CREDITFLOWEMI:z \
                   aquasec/trivy:latest \
                   config /CREDITFLOWEMI/terraform || true
                 '''
