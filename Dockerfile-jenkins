@@ -1,0 +1,11 @@
+FROM jenkins/jenkins:lts
+USER root
+
+RUN apt-get update && apt-get install -y docker.io wget
+
+RUN wget https://github.com/aquasecurity/trivy/releases/download/v0.48.0/trivy_0.48.0_Linux-64bit.deb && \
+    dpkg -i trivy_0.48.0_Linux-64bit.deb
+
+RUN usermod -aG docker jenkins
+
+USER jenkins

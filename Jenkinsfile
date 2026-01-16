@@ -4,12 +4,8 @@ pipeline {
     stages {
         stage('Trivy Scan Terraform') {
             steps {
-                sh '''
-                docker run --rm \
-                  -v $(pwd):/CREDITFLOWEMI:z \
-                  aquasec/trivy:latest \
-                  config /CREDITFLOWEMI/terraform || true
-                '''
+                // sh 'ls'
+                sh 'trivy config --exit-code 1 --severity HIGH,CRITICAL ./terraform'
             }
         }
     }
