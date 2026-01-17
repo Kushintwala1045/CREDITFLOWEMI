@@ -3,5 +3,9 @@ variable "aws_region" {
 }
 
 variable "instance_type" {
-  default = "t2.micro"
+  default = "t3.micro"
+}
+
+variable "ami_id" {
+  default = "ami-0dee22c13ea7a9a67"
 }

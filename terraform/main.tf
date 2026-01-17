@@ -12,15 +12,14 @@ provider "aws" {
 }
 
 resource "aws_security_group" "emi_sg" {
-
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
+    # cidr_blocks = ["0.0.0.0/0"]
     cidr_blocks = ["103.120.248.84/32"]
   }
 
-  #  INTENTIONAL VULNERABILITY
   ingress {
     from_port   = 22
     to_port     = 22
@@ -32,6 +31,34 @@ resource "aws_security_group" "emi_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
+    # cidr_blocks = ["0.0.0.0/0"]
     cidr_blocks = ["103.120.248.84/32"]
+  }
+}
+
+resource "aws_instance" "web_server" {
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  
+  vpc_security_group_ids = [aws_security_group.emi_sg.id]
+
+
+  user_data = <<-EOF
+              #!/bin/bash
+              
+              sudo apt-get update -y
+              sudo apt-get install -y docker.io git docker-compose
+              sudo systemctl start docker
+              sudo systemctl enable docker
+
+              cd /home/ubuntu
+              git clone https://github.com/Kushintwala1045/CREDITFLOWEMI.git app_code
+
+              cd app_code
+              sudo docker-compose up --build -d
+              EOF
+
+  tags = {
+    Name = "CreditFlow-Production-App"
   }
 }
