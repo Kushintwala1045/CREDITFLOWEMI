@@ -6,6 +6,17 @@ RUN apt-get update && apt-get install -y docker.io wget
 RUN wget https://github.com/aquasecurity/trivy/releases/download/v0.48.0/trivy_0.48.0_Linux-64bit.deb && \
     dpkg -i trivy_0.48.0_Linux-64bit.deb
 
+RUN wget "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -O "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm -rf awscliv2.zip ./aws
+
+ARG TERRAFORM_VERSION=1.10.4
+RUN wget "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -O "terraform.zip" && \
+    unzip terraform.zip && \
+    mv terraform /usr/local/bin/ && \
+    rm terraform.zip
+
 RUN usermod -aG docker jenkins
 
 USER jenkins
