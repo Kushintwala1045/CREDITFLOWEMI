@@ -1,3 +1,12 @@
+terraform {
+  backend "s3" {
+    bucket = "creditflowemi-terraform-state"
+    key    = "prod/terraform.tfstate"
+    region = "ap-south-1"
+  }
+}
+
+
 provider "aws" {
   region = var.aws_region
 }
