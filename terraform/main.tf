@@ -42,7 +42,15 @@ resource "aws_instance" "web_server" {
   
   vpc_security_group_ids = [aws_security_group.emi_sg.id]
 
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
 
+  root_block_device {
+    encrypted = true
+  }
+ 
   user_data = <<-EOF
               #!/bin/bash
               
