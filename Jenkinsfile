@@ -1,53 +1,48 @@
 pipeline {
     agent any
 
+    environment {
+        // Use the IDs you created in Jenkins Credentials (Secret text)
+        AWS_ACCESS_KEY_ID     = credentials('aws-access-key')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
+        AWS_DEFAULT_REGION    = 'us-east-1' 
+    }
+
     stages {
-
-        stage('Checkout') {
+        stage('Checkout Source') {
             steps {
-                git branch: 'main', url: 'https://github.com/Kushintwala1045/CREDITFLOWEMI.git'
+                checkout scm
             }
         }
 
-        stage('Policy Compliance Check') {
+        stage('Trivy Security Scan') {
             steps {
-                echo "Validating infrastructure against company security policies"
+                script {
+                    echo "Scanning Infrastructure for vulnerabilities..."
+                    // This will FAIL the build if it finds HIGH/CRITICAL flaws
+                    // Use this output for your AI remediation task
+                    sh 'trivy config --exit-code 1 --severity HIGH,CRITICAL ./terraform'
+                }
             }
         }
 
-        stage('Trivy Terraform Scan') {
+        stage('Terraform Deploy') {
             steps {
-                sh '''
-                trivy config --exit-code 1 --severity HIGH,CRITICAL ./terraform
-                '''
+                dir('terraform') {
+                    sh 'terraform init'
+                    // This creates the actual resources on AWS
+                    sh 'terraform apply -auto-approve'
+                }
             }
         }
+    }
 
-        stage('Terraform Init') {
-            steps {
-                sh '''
-                cd terraform
-                terraform init
-                '''
-            }
+    post {
+        success {
+            echo "Deployment Successful! Check AWS Console for your Public IP."
         }
-
-        stage('Terraform Plan') {
-            steps {
-                sh '''
-                cd terraform
-                terraform plan
-                '''
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                sh '''
-                cd terraform
-                terraform apply -auto-approve
-                '''
-            }
+        failure {
+            echo "Pipeline Failed. If it failed at 'Trivy Scan', use the log for AI remediation."
         }
     }
 }
