@@ -11,6 +11,9 @@ CreditFlowEMI is a DevSecOps-oriented web application designed to demonstrate se
 
 The primary focus of this project is to integrate security in the delivery lifecycle. Infrastructure configurations are scanned for misconfigurations during CI, and deployments are blocked until security risks are remediated. This approach follows the shift-left security principle, ensuring vulnerabilities are detected before reaching production.
 
+## VIDEO DEMO
+[[DEMO]](https://drive.google.com/drive/folders/1mEemYeSuf5dB6bhZJb5QzRzpeyrCJjtD)
+
 ## 2. System Architecture
 
 ### 2.1 High-Level Flow
